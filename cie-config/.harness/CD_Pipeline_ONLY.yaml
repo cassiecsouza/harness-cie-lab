@@ -107,4 +107,4 @@ pipeline:
     variables:
         - name: branch
           type: String
-          value: <+codebase.branch>
+          value: branch

@@ -68,6 +68,21 @@ pipeline:
                   execution:
                       steps:
                           - step:
+                                type: ShellScript
+                                name: Echo
+                                identifier: Echo
+                                spec:
+                                    shell: Bash
+                                    onDelegate: true
+                                    source:
+                                        type: Inline
+                                        spec:
+                                            script: echo $branch
+                                    environmentVariables: []
+                                    outputVariables: []
+                                    executionTarget: {}
+                                timeout: 10m
+                          - step:
                                 name: Rollout Deployment
                                 identifier: rolloutDeployment
                                 type: K8sRollingDeploy
@@ -81,6 +96,7 @@ pipeline:
                                 type: K8sRollingRollback
                                 timeout: 10m
                                 spec: {}
+                  serviceDependencies: []
               tags: {}
               failureStrategies:
                   - onFailure:
@@ -88,4 +104,7 @@ pipeline:
                             - AllErrors
                         action:
                             type: StageRollback
-    variables: []
+    variables:
+        - name: branch
+          type: String
+          value: <+codebase.branch>

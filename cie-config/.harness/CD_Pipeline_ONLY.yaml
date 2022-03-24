@@ -77,7 +77,7 @@ pipeline:
                                     source:
                                         type: Inline
                                         spec:
-                                            script: echo $branch
+                                            script: echo "$branch"
                                     environmentVariables: []
                                     outputVariables: []
                                     executionTarget: {}

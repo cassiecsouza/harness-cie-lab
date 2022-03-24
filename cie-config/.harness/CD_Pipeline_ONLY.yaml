@@ -77,18 +77,11 @@ pipeline:
                                     source:
                                         type: Inline
                                         spec:
-                                            script: echo <+codebase.branch>
+                                            script: echo <+codebase.build.type> == "branch"
                                     environmentVariables: []
                                     outputVariables: []
                                     executionTarget: {}
                                 timeout: 10m
-                          - step:
-                                name: Rollout Deployment
-                                identifier: rolloutDeployment
-                                type: K8sRollingDeploy
-                                timeout: 10m
-                                spec:
-                                    skipDryRun: false
                       rollbackSteps:
                           - step:
                                 name: Rollback Rollout Deployment

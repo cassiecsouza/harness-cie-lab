@@ -1,0 +1,114 @@
+pipeline:
+    name: echo-var
+    identifier: echovar
+    allowStageExecutions: false
+    projectIdentifier: cassieciebootcamp
+    orgIdentifier: default
+    tags: {}
+    properties:
+        ci:
+            codebase:
+                connectorRef: githubcsouzaharness
+                repoName: harness-cie-lab
+                build: <+input>
+    stages:
+        - stage:
+              name: Build
+              identifier: Build
+              type: CI
+              spec:
+                  cloneCodebase: true
+                  infrastructure:
+                      type: KubernetesDirect
+                      spec:
+                          connectorRef: account.bootcampgkecluster
+                          namespace: test
+                  execution:
+                      steps:
+                          - step:
+                                type: Run
+                                name: Build
+                                identifier: Build
+                                spec:
+                                    connectorRef: account.bootcampdockerhub
+                                    image: alpine:latest
+                                    command: export TAG="cassie"
+                                    outputVariables:
+                                        - name: TAG
+        - stage:
+              name: Deploy
+              identifier: Deploy
+              description: ""
+              type: Deployment
+              spec:
+                  serviceConfig:
+                      serviceRef: nginx
+                      serviceDefinition:
+                          type: Kubernetes
+                          spec:
+                              variables: []
+                              manifests:
+                                  - manifest:
+                                        identifier: lab
+                                        type: K8sManifest
+                                        spec:
+                                            store:
+                                                type: Github
+                                                spec:
+                                                    connectorRef: githubcsouzaharness
+                                                    gitFetchType: Branch
+                                                    paths:
+                                                        - harness-deploy
+                                                    repoName: harness-cie-lab
+                                                    branch: main
+                                            skipResourceVersioning: false
+                  infrastructure:
+                      environmentRef: GKEDEV
+                      infrastructureDefinition:
+                          type: KubernetesDirect
+                          spec:
+                              connectorRef: account.bootcampgkecluster
+                              namespace: test
+                              releaseName: release-<+INFRA_KEY>
+                      allowSimultaneousDeployments: false
+                  execution:
+                      steps:
+                          - step:
+                                type: ShellScript
+                                name: Echo Build Var
+                                identifier: Echo_Build_Var
+                                spec:
+                                    shell: Bash
+                                    onDelegate: true
+                                    source:
+                                        type: Inline
+                                        spec:
+                                            script: echo $TAG
+                                    environmentVariables:
+                                        - name: TAG
+                                          type: String
+                                          value: <+pipeline.stages.Build.spec.execution.steps.Build.output.outputVariables.TAG>
+                                    outputVariables: []
+                                    executionTarget: {}
+                                timeout: 10m
+                          - step:
+                                name: Rollout Deployment
+                                identifier: rolloutDeployment
+                                type: K8sRollingDeploy
+                                timeout: 10m
+                                spec:
+                                    skipDryRun: false
+                      rollbackSteps:
+                          - step:
+                                name: Rollback Rollout Deployment
+                                identifier: rollbackRolloutDeployment
+                                type: K8sRollingRollback
+                                timeout: 10m
+                                spec: {}
+              tags: {}
+              failureStrategies:
+                  - onFailure:
+                        errors:
+                            - AllErrors
+                        action:
+                            type: StageRollback

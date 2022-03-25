@@ -22,7 +22,7 @@ pipeline:
                       type: KubernetesDirect
                       spec:
                           connectorRef: account.bootcampgkecluster
-                          namespace: payment-service
+                          namespace: payment-service-build
                   execution:
                       steps:
                           - step:
@@ -68,7 +68,7 @@ pipeline:
                           type: KubernetesDirect
                           spec:
                               connectorRef: account.bootcampgkecluster
-                              namespace: payment-service
+                              namespace: payment-service-dev
                               releaseName: release-<+INFRA_KEY>
                       allowSimultaneousDeployments: false
                   execution:

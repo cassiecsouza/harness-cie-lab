@@ -94,13 +94,6 @@ pipeline:
                                     outputVariables: []
                                     executionTarget: {}
                                 timeout: 10m
-                          - step:
-                                name: Rollout Deployment
-                                identifier: rolloutDeployment
-                                type: K8sRollingDeploy
-                                timeout: 10m
-                                spec:
-                                    skipDryRun: false
                       rollbackSteps:
                           - step:
                                 name: Rollback Rollout Deployment
@@ -108,6 +101,7 @@ pipeline:
                                 type: K8sRollingRollback
                                 timeout: 10m
                                 spec: {}
+                  serviceDependencies: []
               tags: {}
               failureStrategies:
                   - onFailure:

@@ -58,7 +58,7 @@ pipeline:
                                         cd payment-service
                                         mvn -Dmaven.test.skip=true clean install -X
 
-                                        export TAG="cassie"
+                                        export TAG="boop"
                                     outputVariables:
                                         - name: TAG
                                     resources:
@@ -74,7 +74,7 @@ pipeline:
                                     connectorRef: account.bootcampdockerhub
                                     repo: nikpap/payment-service
                                     tags:
-                                        - csouza-harness-latest
+                                        - <+execution.steps.Build.output.outputVariables.TAG>
                                     dockerfile: /harness/payment-service/Dockerfile
                                     optimize: true
                                     resources:
@@ -126,7 +126,7 @@ pipeline:
                                       spec:
                                           connectorRef: account.bootcampdockerhub
                                           imagePath: nikpap/payment-service
-                                          tag: csouza-harness-latest
+                                          tag: <+pipeline.stages.Build.spec.execution.steps.Build.output.outputVariables.TAG>
                                       type: DockerRegistry
                   infrastructure:
                       environmentRef: GKEDEV
@@ -149,8 +149,14 @@ pipeline:
                                     source:
                                         type: Inline
                                         spec:
-                                            script: echo <+pipeline.stages.Build.spec.execution.pipeline.stages.Build.spec.execution.steps.Build.spec.outputVariables.TAG>
-                                    environmentVariables: []
+                                            script: |-
+                                                echo $TAG
+
+                                                echo "Output var: " <+pipeline.stages.Build.spec.execution.steps.Build.output.outputVariables.TAG>
+                                    environmentVariables:
+                                        - name: TAG
+                                          type: String
+                                          value: <+pipeline.stages.Build.spec.execution.steps.Build.output.outputVariables.TAG>
                                     outputVariables: []
                                     executionTarget: {}
                                 timeout: 10m

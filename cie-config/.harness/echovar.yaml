@@ -75,6 +75,13 @@ pipeline:
                                                         - harness-deploy/values.yaml
                                                     repoName: harness-cie-lab
                                                     branch: main
+                              artifacts:
+                                  primary:
+                                      spec:
+                                          connectorRef: account.bootcampdockerhub
+                                          imagePath: nikpap/payment-service
+                                          tag: <+pipeline.stages.Build.spec.execution.steps.Build.output.outputVariables.TAG>
+                                      type: DockerRegistry
                   infrastructure:
                       environmentRef: GKEDEV
                       infrastructureDefinition:

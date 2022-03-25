@@ -188,7 +188,4 @@ pipeline:
                             type: StageRollback
               when:
                   pipelineStatus: Success
-    variables:
-        - name: seusername
-          type: String
-          value: <+input>
+    variables: []

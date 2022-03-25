@@ -169,7 +169,6 @@ pipeline:
                                     skipDryRun: false
                                 when:
                                     stageStatus: Success
-                                    condition: true = false
                                 failureStrategies: []
                       rollbackSteps:
                           - step:

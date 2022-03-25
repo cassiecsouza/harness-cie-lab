@@ -57,10 +57,15 @@ pipeline:
                                     command: |-
                                         cd payment-service
                                         mvn -Dmaven.test.skip=true clean install -X
+
+                                        export TAG="cassie"
+                                    outputVariables:
+                                        - name: TAG
                                     resources:
                                         limits:
                                             memory: 1Gi
                                             cpu: "1"
+                                failureStrategies: []
                           - step:
                                 type: BuildAndPushDockerRegistry
                                 name: pushToDockerHub
@@ -135,6 +140,21 @@ pipeline:
                   execution:
                       steps:
                           - step:
+                                type: ShellScript
+                                name: echo Stage Var
+                                identifier: echo_Stage_Var
+                                spec:
+                                    shell: Bash
+                                    onDelegate: true
+                                    source:
+                                        type: Inline
+                                        spec:
+                                            script: echo <+pipeline.stages.Build.spec.execution.pipeline.stages.Build.spec.execution.steps.Build.spec.outputVariables.TAG>
+                                    environmentVariables: []
+                                    outputVariables: []
+                                    executionTarget: {}
+                                timeout: 10m
+                          - step:
                                 name: Rollout Deployment
                                 identifier: rolloutDeployment
                                 type: K8sRollingDeploy
@@ -148,6 +168,7 @@ pipeline:
                                 type: K8sRollingRollback
                                 timeout: 10m
                                 spec: {}
+                  serviceDependencies: []
               tags: {}
               failureStrategies:
                   - onFailure:

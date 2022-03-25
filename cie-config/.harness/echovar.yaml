@@ -58,10 +58,23 @@ pipeline:
                                                     connectorRef: githubcsouzaharness
                                                     gitFetchType: Branch
                                                     paths:
-                                                        - harness-deploy
+                                                        - harness-deploy/payment-service-dev
                                                     repoName: harness-cie-lab
                                                     branch: main
                                             skipResourceVersioning: false
+                                  - manifest:
+                                        identifier: values
+                                        type: Values
+                                        spec:
+                                            store:
+                                                type: Github
+                                                spec:
+                                                    connectorRef: githubcsouzaharness
+                                                    gitFetchType: Branch
+                                                    paths:
+                                                        - harness-deploy/values.yaml
+                                                    repoName: harness-cie-lab
+                                                    branch: main
                   infrastructure:
                       environmentRef: GKEDEV
                       infrastructureDefinition:

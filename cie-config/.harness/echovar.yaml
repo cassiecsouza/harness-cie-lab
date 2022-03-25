@@ -83,7 +83,10 @@ pipeline:
                                     source:
                                         type: Inline
                                         spec:
-                                            script: echo $TAG
+                                            script: |-
+                                                echo $TAG
+
+                                                echo "output var: " <+pipeline.stages.Build.spec.execution.steps.Build.output.outputVariables.TAG>
                                     environmentVariables:
                                         - name: TAG
                                           type: String

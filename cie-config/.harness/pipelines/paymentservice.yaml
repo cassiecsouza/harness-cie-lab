@@ -161,6 +161,10 @@ pipeline:
                                 timeout: 10m
                                 spec:
                                     skipDryRun: false
+                                when:
+                                    stageStatus: Success
+                                    condition: true = false
+                                failureStrategies: []
                       rollbackSteps:
                           - step:
                                 name: Rollback Rollout Deployment
@@ -176,6 +180,8 @@ pipeline:
                             - AllErrors
                         action:
                             type: StageRollback
+              when:
+                  pipelineStatus: Success
     variables:
         - name: seusername
           type: String

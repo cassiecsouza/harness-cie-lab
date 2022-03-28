@@ -91,11 +91,11 @@ pipeline:
                                       identifier: Build_and_Push_to_ECR
                                       spec:
                                           connectorRef: cassieawsconnector
-                                          region: us-east-2
-                                          account: "759984737373"
-                                          imageName: payment-service-test
+                                          region: 759984737373.dkr.ecr.us-east-2.amazonaws.com
+                                          account: 759984737373.dkr.ecr.us-east-2.amazonaws.com
+                                          imageName: cassie-sandbox
                                           tags:
-                                              - cassie-test
+                                              - cie-push-test
                                           dockerfile: /harness/payment-service/Dockerfile
                                           resources:
                                               limits:

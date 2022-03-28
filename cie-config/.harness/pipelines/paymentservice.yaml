@@ -26,28 +26,6 @@ pipeline:
                   execution:
                       steps:
                           - step:
-                                type: RunTests
-                                name: runTestWithTestIntelligence
-                                identifier: runTestWithTestIntelligence
-                                spec:
-                                    connectorRef: account.bootcampdockerhub
-                                    image: nikpap/mvn-openjdk-8:harness
-                                    language: Java
-                                    buildTool: Maven
-                                    args: test
-                                    packages: com.nikp
-                                    runOnlySelectedTests: true
-                                    preCommand: cd payment-service
-                                    reports:
-                                        type: JUnit
-                                        spec:
-                                            paths:
-                                                - "**/*.xml"
-                                    resources:
-                                        limits:
-                                            memory: 2Gi
-                                            cpu: "2"
-                          - step:
                                 type: Run
                                 name: Build
                                 identifier: Build

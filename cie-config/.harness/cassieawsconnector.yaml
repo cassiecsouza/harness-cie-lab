@@ -1,0 +1,12 @@
+connector:
+  name: cassie-aws-connector
+  identifier: cassieawsconnector
+  description:
+  orgIdentifier: default
+  projectIdentifier: cassieciebootcamp
+  type: Aws
+  spec:
+    credential:
+      type: InheritFromDelegate
+    delegateSelectors:
+    - cassie-aws

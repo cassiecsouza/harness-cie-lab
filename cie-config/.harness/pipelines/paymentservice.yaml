@@ -91,8 +91,8 @@ pipeline:
                                       identifier: Build_and_Push_to_ECR
                                       spec:
                                           connectorRef: cassieawsconnector
-                                          region: 759984737373.dkr.ecr.us-east-2.amazonaws.com
-                                          account: 759984737373.dkr.ecr.us-east-2.amazonaws.com
+                                          region: us-east-2
+                                          account: "759984737373"
                                           imageName: cassie-sandbox
                                           tags:
                                               - cie-push-test

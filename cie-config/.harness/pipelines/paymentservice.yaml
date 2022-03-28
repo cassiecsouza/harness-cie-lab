@@ -66,21 +66,41 @@ pipeline:
                                             memory: 1Gi
                                             cpu: "1"
                                 failureStrategies: []
-                          - step:
-                                type: BuildAndPushDockerRegistry
-                                name: pushToDockerHub
-                                identifier: pushToDockerHub
-                                spec:
-                                    connectorRef: account.bootcampdockerhub
-                                    repo: nikpap/payment-service
-                                    tags:
-                                        - <+execution.steps.Build.output.outputVariables.TAG>
-                                    dockerfile: /harness/payment-service/Dockerfile
-                                    optimize: true
-                                    resources:
-                                        limits:
-                                            memory: 1Gi
-                                            cpu: "1"
+                          - parallel:
+                                - step:
+                                      type: BuildAndPushDockerRegistry
+                                      name: pushToDockerHub
+                                      identifier: pushToDockerHub
+                                      spec:
+                                          connectorRef: account.bootcampdockerhub
+                                          repo: nikpap/payment-service
+                                          tags:
+                                              - <+execution.steps.Build.output.outputVariables.TAG>
+                                          dockerfile: /harness/payment-service/Dockerfile
+                                          optimize: true
+                                          resources:
+                                              limits:
+                                                  memory: 1Gi
+                                                  cpu: "1"
+                                      when:
+                                          stageStatus: Failure
+                                      failureStrategies: []
+                                - step:
+                                      type: BuildAndPushECR
+                                      name: Build and Push to ECR
+                                      identifier: Build_and_Push_to_ECR
+                                      spec:
+                                          connectorRef: cassieawsconnector
+                                          region: us-east-2
+                                          account: "759984737373"
+                                          imageName: payment-service-test
+                                          tags:
+                                              - cassie-test
+                                          dockerfile: /harness/payment-service/Dockerfile
+                                          resources:
+                                              limits:
+                                                  memory: 1Gi
+                                                  cpu: "1"
         - stage:
               name: DeployDev
               identifier: DeployDev

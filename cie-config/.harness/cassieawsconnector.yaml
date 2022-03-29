@@ -7,9 +7,6 @@ connector:
   type: Aws
   spec:
     credential:
-      type: ManualConfig
-      spec:
-        accessKey: AKIA3B4U6ZRO3ZJKBPEM
-        secretKeyRef: cassieecriam
+      type: InheritFromDelegate
     delegateSelectors:
     - new-docker-delegate-cassie

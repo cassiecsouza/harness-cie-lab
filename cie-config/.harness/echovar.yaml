@@ -1,6 +1,6 @@
 pipeline:
-    name: payment-service
-    identifier: paymentservice
+    name: echo-var
+    identifier: echovar
     allowStageExecutions: false
     projectIdentifier: cassieciebootcamp
     orgIdentifier: default
@@ -31,67 +31,37 @@ pipeline:
                                 identifier: Build
                                 spec:
                                     connectorRef: account.bootcampdockerhub
-                                    image: nikpap/mvn-openjdk-8:harness
-                                    command: |-
-                                        cd payment-service
-                                        mvn -Dmaven.test.skip=true clean install -X
-
-                                        export TAG="boop"
+                                    image: alpine:latest
+                                    command: export TAG="boop"
                                     outputVariables:
                                         - name: TAG
-                                    resources:
-                                        limits:
-                                            memory: 1Gi
-                                            cpu: "1"
-                                failureStrategies: []
-                          - parallel:
-                                - step:
-                                      type: BuildAndPushDockerRegistry
-                                      name: pushToDockerHub
-                                      identifier: pushToDockerHub
-                                      spec:
-                                          connectorRef: account.bootcampdockerhub
-                                          repo: nikpap/payment-service
-                                          tags:
-                                              - <+execution.steps.Build.output.outputVariables.TAG>
-                                          dockerfile: /harness/payment-service/Dockerfile
-                                          optimize: true
-                                          resources:
-                                              limits:
-                                                  memory: 1Gi
-                                                  cpu: "1"
-                                      when:
-                                          stageStatus: Failure
-                                      failureStrategies: []
-                                - step:
-                                      type: BuildAndPushECR
-                                      name: Build and Push to ECR
-                                      identifier: Build_and_Push_to_ECR
-                                      spec:
-                                          connectorRef: cassieawsconnector
-                                          region: us-east-2
-                                          account: "759984737373"
-                                          imageName: cassie-sandbox
-                                          tags:
-                                              - cie-push-test
-                                          dockerfile: /harness/payment-service/Dockerfile
-                                          resources:
-                                              limits:
-                                                  memory: 1Gi
-                                                  cpu: "1"
         - stage:
-              name: DeployDev
-              identifier: DeployDev
+              name: Deploy
+              identifier: Deploy
               description: ""
               type: Deployment
               spec:
                   serviceConfig:
-                      serviceRef: paymentservice
+                      serviceRef: nginx
                       serviceDefinition:
                           type: Kubernetes
                           spec:
                               variables: []
                               manifests:
+                                  - manifest:
+                                        identifier: lab
+                                        type: K8sManifest
+                                        spec:
+                                            store:
+                                                type: Github
+                                                spec:
+                                                    connectorRef: githubcsouzaharness
+                                                    gitFetchType: Branch
+                                                    paths:
+                                                        - harness-deploy/payment-service-dev
+                                                    repoName: harness-cie-lab
+                                                    branch: main
+                                            skipResourceVersioning: false
                                   - manifest:
                                         identifier: values
                                         type: Values
@@ -105,20 +75,6 @@ pipeline:
                                                         - harness-deploy/values.yaml
                                                     repoName: harness-cie-lab
                                                     branch: main
-                                  - manifest:
-                                        identifier: templates
-                                        type: K8sManifest
-                                        spec:
-                                            store:
-                                                type: Github
-                                                spec:
-                                                    connectorRef: githubcsouzaharness
-                                                    gitFetchType: Branch
-                                                    paths:
-                                                        - harness-deploy/payment-service-dev
-                                                    repoName: harness-cie-lab
-                                                    branch: main
-                                            skipResourceVersioning: false
                               artifacts:
                                   primary:
                                       spec:
@@ -139,8 +95,8 @@ pipeline:
                       steps:
                           - step:
                                 type: ShellScript
-                                name: echo Stage Var
-                                identifier: echo_Stage_Var
+                                name: Echo Build Var
+                                identifier: Echo_Build_Var
                                 spec:
                                     shell: Bash
                                     onDelegate: true
@@ -150,7 +106,7 @@ pipeline:
                                             script: |-
                                                 echo $TAG
 
-                                                echo "Output var: " <+pipeline.stages.Build.spec.execution.steps.Build.output.outputVariables.TAG>
+                                                echo "output var: " <+pipeline.stages.Build.spec.execution.steps.Build.output.outputVariables.TAG>
                                     environmentVariables:
                                         - name: TAG
                                           type: String
@@ -159,15 +115,12 @@ pipeline:
                                     executionTarget: {}
                                 timeout: 10m
                           - step:
-                                name: Rollout Deployment
-                                identifier: rolloutDeployment
                                 type: K8sRollingDeploy
-                                timeout: 10m
+                                name: rollout
+                                identifier: rollout
                                 spec:
                                     skipDryRun: false
-                                when:
-                                    stageStatus: Success
-                                failureStrategies: []
+                                timeout: 10m
                       rollbackSteps:
                           - step:
                                 name: Rollback Rollout Deployment
@@ -183,6 +136,3 @@ pipeline:
                             - AllErrors
                         action:
                             type: StageRollback
-              when:
-                  pipelineStatus: Success
-    variables: []

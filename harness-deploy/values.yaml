@@ -2,7 +2,6 @@ name: payment-service
 replicas: 1
 
 image: nikpap/payment-service:585
-# dockercfg: <+artifact.imagePullSecret>
 
 createNamespace: true
 namespace: <+infra.namespace>

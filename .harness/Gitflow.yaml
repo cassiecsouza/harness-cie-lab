@@ -30,7 +30,7 @@ pipeline:
                       type: Inline
                       spec:
                         script: |-
-                          if "<+trigger.type>" == webhook
+                          if [[ "<+trigger.type>" == webhook ]]
                           then
                             PRE_VERSION="<+trigger.payload.ref>"
                           else

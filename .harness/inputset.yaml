@@ -1,0 +1,14 @@
+inputSet:
+  identifier: "Why"
+  name: "Why"
+  orgIdentifier: "default"
+  projectIdentifier: "Cassie_Sandbox"
+  pipeline:
+    identifier: "Gitflow"
+    properties:
+      ci:
+        codebase:
+          build:
+            type: "branch"
+            spec:
+              branch: "<+trigger.branch>"

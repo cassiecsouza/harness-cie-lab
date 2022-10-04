@@ -30,7 +30,10 @@ pipeline:
                       type: Inline
                       spec:
                         script: |-
-                          PRE_VERSION="<+pipeline.tag>"
+                          WEBHOOK_TYPE="<+webhook.type>"
+                          echo $WEBHOOK_TYPE
+
+                          PRE_VERSION="<+trigger.payload.ref>"
                           VERSION=$(echo $PRE_VERSION |awk -F'/' '{print $3}')
                     environmentVariables: []
                     outputVariables: []
@@ -66,5 +69,6 @@ pipeline:
   variables:
     - name: tag
       type: String
+      default: "1.0"
       description: ""
-      value: "<+trigger.type> == \"webhook\" ?  <+trigger.payload.ref> : <+input>"
+      value: <+input>

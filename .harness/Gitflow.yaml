@@ -31,6 +31,7 @@ pipeline:
                       spec:
                         script: |-
                           if "<+trigger.type>" == webhook
+                          then
                             PRE_VERSION="<+trigger.payload.ref>"
                           else
                             PRE_VERSION="<+pipeline.tag>"

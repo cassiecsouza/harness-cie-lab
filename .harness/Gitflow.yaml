@@ -12,6 +12,34 @@ pipeline:
         build: <+input>
   stages:
     - stage:
+        name: Parse Gitlab Input
+        identifier: Parse_Gitlab_Input
+        description: ""
+        type: Custom
+        spec:
+          execution:
+            steps:
+              - step:
+                  type: ShellScript
+                  name: Parse Data
+                  identifier: Parse_Data
+                  spec:
+                    shell: Bash
+                    onDelegate: true
+                    source:
+                      type: Inline
+                      spec:
+                        script: |-
+                          if "<+trigger.type>" == webhook
+                            PRE_VERSION="<+trigger.payload.ref>"
+                          else
+                            PRE_VERSION="<+pipeline.tag>"
+                          VERSION=$(echo $PRE_VERSION |awk -F'/' '{print $3}')
+                    environmentVariables: []
+                    outputVariables: []
+                  timeout: 10m
+        tags: {}
+    - stage:
         name: Build
         identifier: Build
         description: ""
@@ -37,3 +65,9 @@ pipeline:
                     image: bash
                     shell: Sh
                     command: echo <+pipeline.tag>
+        variables: []
+  variables:
+    - name: tag
+      type: String
+      description: ""
+      value: <+input>

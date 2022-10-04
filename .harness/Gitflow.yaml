@@ -30,8 +30,8 @@ pipeline:
                       type: Inline
                       spec:
                         script: |-
-                          WEBHOOK_TYPE="<+webhook.type>"
-                          echo $WEBHOOK_TYPE
+                          TRIGGER_TYPE="<+trigger.type>"
+                          echo ${TRIGGER_TYPE}
 
                           PRE_VERSION="<+trigger.payload.ref>"
                           VERSION=$(echo $PRE_VERSION |awk -F'/' '{print $3}')
@@ -64,7 +64,7 @@ pipeline:
                     connectorRef: dockerhubcassie
                     image: bash
                     shell: Sh
-                    command: echo <+pipeline.tag>
+                    command: echo <+pipeline.variables.tag>
         variables: []
   variables:
     - name: tag

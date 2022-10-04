@@ -33,11 +33,12 @@ pipeline:
                           TRIGGER_TYPE="<+trigger.type>"
                           echo ${TRIGGER_TYPE}
 
-                          if ${TRIGGER_TYPE} == "Webhook"
+                          if ${TRIGGER_TYPE} == "Webhook" 
                           then
                               PRE_VERSION="<+trigger.payload.ref>"
                           else
                               PRE_VERSION="<+pipeline.variables.tag>>"
+                          fi
 
                           echo ${PRE_VERSION}
                           VERSION=$(echo $PRE_VERSION |awk -F'/' '{print $3}')

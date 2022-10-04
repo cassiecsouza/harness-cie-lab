@@ -36,12 +36,12 @@ pipeline:
                           if [[ $TRIGGER_TYPE == "Webhook" ]]
                           then
                               PRE_VERSION="<+trigger.payload.ref>"
+                              VERSION=$(echo $PRE_VERSION |awk -F'/' '{print $3}')
                           else
-                              PRE_VERSION="<+pipeline.variables.tag>"
+                              VERSION="<+pipeline.variables.tag>"
                           fi
 
-                          echo "PRE VERSION IS: $PRE_VERSION"
-                          VERSION=$(echo $PRE_VERSION |awk -F'/' '{print $3}')
+                          echo "VERSION IS: $VERSION"
                     environmentVariables: []
                     outputVariables:
                       - name: VERSION

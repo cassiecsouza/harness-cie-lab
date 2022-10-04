@@ -1,0 +1,39 @@
+pipeline:
+  name: Gitflow
+  identifier: Gitflow
+  projectIdentifier: Cassie_Sandbox
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: cassiegithub
+        repoName: harness-cie-lab
+        build: <+input>
+  stages:
+    - stage:
+        name: Build
+        identifier: Build
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: harnesssecassie
+              namespace: cassie-dev
+              automountServiceAccountToken: true
+              nodeSelector: {}
+              os: Linux
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Echo variable
+                  identifier: Echo_variable
+                  spec:
+                    connectorRef: dockerhubcassie
+                    image: bash
+                    shell: Sh
+                    command: echo <+pipeline.tag>

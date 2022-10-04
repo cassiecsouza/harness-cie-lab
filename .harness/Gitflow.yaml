@@ -74,7 +74,7 @@ pipeline:
                     connectorRef: dockerhubcassie
                     image: bash
                     shell: Sh
-                    command: echo <+pipeline.tag>
+                    command: echo <+pipeline.stages.Parse_Gitlab_Input.spec.execution.steps.Parse_Data.output.outputVariables.VERSION>
         variables: []
   variables:
     - name: tag

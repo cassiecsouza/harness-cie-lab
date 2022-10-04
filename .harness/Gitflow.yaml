@@ -33,10 +33,19 @@ pipeline:
                           TRIGGER_TYPE="<+trigger.type>"
                           echo ${TRIGGER_TYPE}
 
-                          PRE_VERSION="<+trigger.payload.ref>"
+                          if ${TRIGGER_TYPE} == "Webhook"
+                          then
+                              PRE_VERSION="<+trigger.payload.ref>"
+                          else
+                              PRE_VERSION="<+pipeline.variables.tag>>"
+
+                          echo ${PRE_VERSION}
                           VERSION=$(echo $PRE_VERSION |awk -F'/' '{print $3}')
                     environmentVariables: []
-                    outputVariables: []
+                    outputVariables:
+                      - name: VERSION
+                        type: String
+                        value: VERSION
                   timeout: 10m
         tags: {}
     - stage:
@@ -64,7 +73,7 @@ pipeline:
                     connectorRef: dockerhubcassie
                     image: bash
                     shell: Sh
-                    command: echo <+pipeline.variables.tag>
+                    command: echo <+pipeline.tag>
         variables: []
   variables:
     - name: tag

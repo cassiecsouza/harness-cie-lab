@@ -2,7 +2,7 @@ pipeline:
     name: CD_Pipeline_ONLY
     identifier: CD_Pipeline_ONLY
     allowStageExecutions: false
-    projectIdentifier: cassieciebootcamp
+    projectIdentifier: Demo
     orgIdentifier: default
     tags: {}
     stages:

@@ -1,6 +1,6 @@
 pipeline:
-    name: CD_Pipeline_ONLY
-    identifier: CD_Pipeline_ONLY
+    name: pipeline
+    identifier: pipeline
     allowStageExecutions: false
     projectIdentifier: Demo
     orgIdentifier: default

@@ -18,6 +18,7 @@ pipeline:
                           type: Kubernetes
                           spec:
                               variables:
+                                  # test comment
                                   - name: test
                                     type: String
                                     value: test

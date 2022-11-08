@@ -30,5 +30,5 @@ env:
   #  HARNESS_SE: seusername
     HARNESS_BUILD: <+pipeline.sequenceId>
   secrets:
-    key2: value2
+    key2: <+secrets.getValue("account.githubdemo")>
 
